@@ -4,9 +4,10 @@ class {
   onCreate() {
     debugger;
     this.state = {
-        count : 0,
-        apiData : null
-    };
+        hashtag : "javascript",
+        tweets  : require('../../../boilerplate-tweets.json')
+    }
+    this.state.title = `Here are the latest ${this.state.tweets.length} tweets with the hashtag #${this.state.hashtag}`;
 
   }
   onMount() {
@@ -14,30 +15,27 @@ class {
     debugger;
 
     // get Data
-    (function() {
-      var httpRequest = new XMLHttpRequest();
-
-      httpRequest.onreadystatechange = stateChanged;
-      httpRequest.open('GET', 'https://api.github.com/users/sorcamarian/followers');
-      httpRequest.send();
-
-
-      function stateChanged() {
-        if (httpRequest.readyState === window.XMLHttpRequest.DONE) {
-          if (httpRequest.status === 200) {
-            debugger;
-            console.log(httpRequest.responseText);
-            var data = JSON.parse(httpRequest.responseText);
-            _self.state.apiData = data;
-          } else {
-            return('There was a problem with the request.');
-          }
-        }
-      }
-    })();
-  }
-  increment() {
-    this.state.increment++;
+    // (function() {
+    //   var httpRequest = new XMLHttpRequest();
+    //
+    //   httpRequest.onreadystatechange = stateChanged;
+    //   httpRequest.open('GET', 'https://api.github.com/users/sorcamarian/followers');
+    //   httpRequest.send();
+    //
+    //
+    //   function stateChanged() {
+    //     if (httpRequest.readyState === window.XMLHttpRequest.DONE) {
+    //       if (httpRequest.status === 200) {
+    //         debugger;
+    //         console.log(httpRequest.responseText);
+    //         var data = JSON.parse(httpRequest.responseText);
+    //         _self.state.apiData = data;
+    //       } else {
+    //         return('There was a problem with the request.');
+    //       }
+    //     }
+    //   }
+    // })();
   }
 
 }
@@ -45,27 +43,17 @@ class {
 
 
 style {
-  .count {
-    color:#70b;
-    font-size:3em;
-  }
-  .example-button {
-    font-size:1em;
-    padding:0.5em;
+  h1{
+    text-align : center;
   }
 }
 
-
-<div.count>
-  ${state.count}
+<h1>${state.title}</h1>
+<div id="tweets">
+  <ul>
+    <li for(tweet in state.tweets)>
+      <p>${tweet.text}</p>
+      <div class="twitter-details"></div>
+    </li>
+  </ul>
 </div>
-<button.example-button on-click('increment')>
-  Click me!
-</button>
-
-<if(state.apiData)>
-    <div>${state.apiData[0].login}</div>
-</if>
-<else>
-    <h2>Loading data...</h2>
-</else>
