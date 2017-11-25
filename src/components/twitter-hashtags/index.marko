@@ -1,0 +1,158 @@
+<!-- $ var axios = require('axios'); -->
+
+class {
+  onCreate() {
+    debugger;
+    this.state = {
+        hashtag : "javascript",
+        tweets  : require('../../../boilerplate-tweets.json')
+    }
+    this.state.title = `Here are the latest ${this.state.tweets.length} tweets with the hashtag #${this.state.hashtag}`;
+    // include error state :(
+    // title:  :(
+    // entry:  A error has occured, try another hashtag
+  }
+  onMount() {
+    var _self = this;
+
+    // get Data
+    // (function() {
+    //   var httpRequest = new XMLHttpRequest();
+    //
+    //   httpRequest.onreadystatechange = stateChanged;
+    //   httpRequest.open('GET', 'https://api.github.com/users/sorcamarian/followers');
+    //   httpRequest.send();
+    //
+    //
+    //   function stateChanged() {
+    //     if (httpRequest.readyState === window.XMLHttpRequest.DONE) {
+    //       if (httpRequest.status === 200) {
+    //         debugger;
+    //         console.log(httpRequest.responseText);
+    //         var data = JSON.parse(httpRequest.responseText);
+    //         _self.state.apiData = data;
+    //       } else {
+    //         return('There was a problem with the request.');
+    //       }
+    //     }
+    //   }
+    // })();
+  }
+
+}
+
+
+
+style {
+  h4{
+    text-align : center;
+  }
+
+  .collection{
+    border : none;
+  }
+  .collection.with-header .collection-header{
+    text-align     : center;
+    background     : rgba(255,255,255, .5);
+    border-bottom  : dashed rgba(0,0,0, .3);
+  }
+  .collection.with-header .collection-item.avatar{
+    margin         : 13px 0px;
+    border-radius  : 25px;
+    cursor         : pointer;
+    background     : rgba(255,255, 255, .9);
+  }
+  .collection.with-header .collection-item.avatar .tweet-text{
+    padding-bottom : 2rem;
+  }
+
+  .collection.with-header .collection-item.avatar > {
+    transition : opacity 120ms;
+  }
+  .collection.with-header .collection-item.avatar:hover >:not(.keep-opacity){
+    opacity    : .5;
+  }
+  .collection.with-header .collection-item.avatar {
+    transition : background-color 200ms 120ms;
+  }
+  .collection.with-header .collection-item.avatar:hover {
+    background : rgba(255,255, 255, 1);
+  }
+
+  .tweet-created-at{
+    display          : inline-flex;
+    background    : rgba(0,0,0, .05);
+    border-radius : 10px;
+    padding       : 2px 9px;
+    position    : absolute;
+    right       : 0;
+    bottom      : 0px;
+    margin-top  : 5px;
+    font-size : .9em;
+  }
+
+  footer a{
+    font-style : italic;
+    color      : white;
+  }
+}
+
+<div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <form>
+        <div class="input-field">
+          <input id="search" type="search" required="" value="${state.hashtag}">
+          <label class="label-icon active" for="search"><i class="material-icons">search</i></label>
+          <i class="material-icons">close</i>
+        </div>
+      </form>
+    </div>
+  </nav>
+</div>
+
+<div class="content">
+  <div id="tweets">
+    <ul class="collection with-header">
+
+      <li class="collection-header">
+        <h4>Here are the latest ${state.tweets.length} tweets with the hashtag: #${state.hashtag}</h4>
+      </li>
+
+      <li for(tweet in state.tweets) class="collection-item avatar">
+        <img src="${tweet.user.profile_image_url}" alt="${tweet.user.screen_name}" class="circle">
+
+        <span class="title">
+          <a href="${tweet.user.url}" target="_blank"> ${tweet.user.screen_name}</a>
+        </span>
+
+        <p class="tweet-text keep-opacity">${tweet.text}</p>
+
+        <p class="tweet-created-at keep-opacity">${tweet.created_at}</p>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+<footer class="page-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col l6 s12">
+        <h5 class="white-text">Build with
+          <i class="material-icons">create</i>&nbsp;
+          <i class="material-icons">build</i>&nbsp;
+          <i class="material-icons">laptop</i>
+        </h5>
+        <p class="grey-text text-lighten-4">FrontEnd: <a target="_blank" href="://markojs.com">Marko.js</a> and  <a target="_blank" href="://materializecss.com">MaterializeCSS</a></p>
+        <p class="grey-text text-lighten-4">BackEnd:  <a target="_blank" href="://expressjs.com">Express.js</a> and <a target="_blank" href="://www.npmjs.com/package/twitter">twitter NPM plugin</a></p>
+        <p class="grey-text text-lighten-4">Hosted by:  <a target="_blank" href="://zeit.co">Zeit.co</a></p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <div class="container">
+      Source codes on GitHub
+    </div>
+  </div>
+</footer>
