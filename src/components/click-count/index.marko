@@ -1,11 +1,48 @@
+<!-- $ var axios = require('axios'); -->
+
 class {
   onCreate() {
-    this.state = { count:0 };
+    debugger;
+    this.state = {
+        count : 0,
+        apiData : null
+    };
+
+  }
+  onMount() {
+    var _self = this;
+    debugger;
+
+    // get Data
+    (function() {
+      var httpRequest = new XMLHttpRequest();
+
+      httpRequest.onreadystatechange = stateChanged;
+      httpRequest.open('GET', 'https://api.github.com/users/sorcamarian/followers');
+      httpRequest.send();
+
+
+      function stateChanged() {
+        if (httpRequest.readyState === window.XMLHttpRequest.DONE) {
+          if (httpRequest.status === 200) {
+            debugger;
+            console.log(httpRequest.responseText);
+            var data = JSON.parse(httpRequest.responseText);
+            _self.state.apiData = data;
+          } else {
+            return('There was a problem with the request.');
+          }
+        }
+      }
+    })();
   }
   increment() {
-    this.state.count++;
+    this.state.increment++;
   }
+
 }
+
+
 
 style {
   .count {
@@ -18,9 +55,17 @@ style {
   }
 }
 
+
 <div.count>
   ${state.count}
 </div>
 <button.example-button on-click('increment')>
   Click me!
 </button>
+
+<if(state.apiData)>
+    <div>${state.apiData[0].login}</div>
+</if>
+<else>
+    <h2>Loading data...</h2>
+</else>
