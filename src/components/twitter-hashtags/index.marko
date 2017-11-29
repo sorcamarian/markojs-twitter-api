@@ -2,6 +2,8 @@
 class {
 
   // todo - replace profile url with correct one
+  // todo - list of issues - start with #issue1
+  // todo - update credits list
 
   onCreate() {
     debugger;
@@ -12,9 +14,6 @@ class {
         // API will be called 3 times due to API cache #issue1
         apiRequestsNr  : 0
     }
-    // include error state :(
-    // title:  :(
-    // entry:  A error has occured, try another hashtag
   }
   onMount() {
     var _self = this;
@@ -32,27 +31,34 @@ class {
         url      : 'http://localhost:7070/api/' + _hashtagChoosen,
         dataType : "json",
         success  : function(response){
-          debugger;
+
           _self.state.apiRequestsNr++;
-          // Repeat request due to cache #issue1
+          // Repeat request due to cache #issue1 on the API
           if(_self.state.apiRequestsNr < 3) {
             setTimeout( () => {
               _self.getTweets(_hashtagChoosen);
             }, 500);
           }
-          // Display data on the 3 request
+          // Display data on the third request
           else {
+            // set data for consumption
             _self.state.tweets        = response;
             _self.state.activeHashtag = _hashtagChoosen;
+            // reset state
             _self.state.apiRequestsNr = 0;
+            // blur the search input from top navigation
+            _self.getEl("searchInput").blur();
           }
 
         }, // success()
+        error : function(){
+          _self.state.tweets = new Error("API call failed");
+        }
       });
 
   } // getTweets(hashtagChoosen)
 
-  onFormSubmit(){
+  onFormSubmit(event){
     event.preventDefault();
     var inputValue = event.target.querySelector("input").value;
     this.getTweets(inputValue);
@@ -78,6 +84,13 @@ style {
     text-align     : center;
     background     : rgba(255,255,255, .5);
     border-bottom  : dashed rgba(0,0,0, .3);
+  }
+  .collection .collection-header{
+    display     : flex;
+    align-items : center;
+  }
+  .collection .collection-header .material-icons{
+    margin-right : 5px;
   }
   .collection.with-header .collection-item.avatar{
     margin         : 13px 0px;
@@ -130,7 +143,8 @@ style {
               type="search"
               required=""
               on-contextmenu('debuggFunction')
-              value="${state.activeHashtag}">
+              key="searchInput"
+              value="${state.activeHashtag || state.defaultHashtag}">
           <label class="label-icon active" for="search"><i class="material-icons">search</i></label>
           <i class="material-icons">close</i>
         </div>
@@ -139,32 +153,55 @@ style {
   </nav>
 </div>
 
-<div class="content">
+<div id="main" class="content">
   <div id="tweets">
-    <ul if(state.tweets) class="collection with-header" >
+    <if(null == state.tweets)>
+      <ul class="collection with-header" >
+        <li class="collection-header">
+          <i class="material-icons medium">cached</i>
+          <h4>Loading tweets...</h4>
+        </li>
+      </ul>
+    </if>
+    <else-if(state.tweets instanceof Error)>
+      <ul class="collection with-header" >
+        <li class="collection-header">
+          <i class="material-icons medium">sentiment_dissatisfied</i>
+          <h4>
+            <span>Server error.</span><br>
+            <span>Try to enter another hashtag or refresh the page.</span>
+          </h4>
+        </li>
+      </ul>
+    </else-if>
+    <else-if(0 == state.tweets.statuses.length)>
+      <ul class="collection with-header" >
+        <li class="collection-header">
+          <i class="material-icons medium">sentiment_neutral</i>
+          <h4>No results found, try another hashtag</h4>
+        </li>
+      </ul>
+    </else-if>
+    <else>
+      <ul class="collection with-header" >
+        <li class="collection-header">
+          <h4>Here are the latest ${state.tweets.statuses.length} tweets with the hashtag: #${state.activeHashtag}</h4>
+        </li>
+        <li for(tweet in state.tweets.statuses) class="collection-item avatar">
+          <img src="${tweet.user.profile_image_url}" alt="${tweet.user.screen_name}" class="circle">
+          <span class="title">
+            <a href="${tweet.user.url}" target="_blank"> ${tweet.user.screen_name}</a>
+          </span>
+          <p class="tweet-text keep-opacity">${tweet.text}</p>
+          <p class="tweet-created-at keep-opacity">${tweet.created_at}</p>
+        </li>
+      </ul>
+    </else>
+  </div> <!-- #tweets -->
+</div> <!-- .content -->
 
-      <li class="collection-header">
-        <h4>Here are the latest ${state.tweets.statuses.length} tweets with the hashtag: #${state.activeHashtag}</h4>
-      </li>
 
-      <li for(tweet in state.tweets.statuses) class="collection-item avatar">
-        <img src="${tweet.user.profile_image_url}" alt="${tweet.user.screen_name}" class="circle">
-
-        <span class="title">
-          <a href="${tweet.user.url}" target="_blank"> ${tweet.user.screen_name}</a>
-        </span>
-
-        <p class="tweet-text keep-opacity">${tweet.text}</p>
-
-        <p class="tweet-created-at keep-opacity">${tweet.created_at}</p>
-      </li>
-    </ul>
-
-  </div>
-</div>
-
-
-<footer class="page-footer">
+<footer id="footer" class="page-footer">
   <div class="container">
     <div class="row">
       <div class="col l6 s12">
