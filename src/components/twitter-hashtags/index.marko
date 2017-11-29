@@ -1,12 +1,16 @@
-<!-- $ var axios = require('axios'); -->
 
 class {
+
+  // todo - replace profile url with correct one
+
   onCreate() {
     debugger;
     this.state = {
         defaultHashtag : "javascript",
         activeHashtag  : null,
-        tweets  : null
+        tweets         : null,
+        // API will be called 3 times due to API cache #issue1
+        apiRequestsNr  : 0
     }
     // include error state :(
     // title:  :(
@@ -14,131 +18,39 @@ class {
   }
   onMount() {
     var _self = this;
-    this.getTweets(this.state.defaultHashtag, "initialCall");
+    this.getTweets(this.state.defaultHashtag);
   }
-  // Send a request to the server
-  getTweets(hashtagChoosen, isInitializationCall){
+  // Send API request
+  getTweets(hashtagChoosen){
       debugger;
 
       // closure
       var _hashtagChoosen     = hashtagChoosen;
-      var _initializationCall = isInitializationCall;
       var _self               = this;
-      // helper
-      var isNewHashtagInput   = hashtagChoosen !== this.state.activeHashtag;
-
 
       $.ajax({
         url      : 'http://localhost:7070/api/' + _hashtagChoosen,
         dataType : "json",
         success  : function(response){
           debugger;
-          var displayData = function() {
-            debugger;
-            // NOTE: without #issue1 this is the only necessary code
+          _self.state.apiRequestsNr++;
+          // Repeat request due to cache #issue1
+          if(_self.state.apiRequestsNr < 3) {
+            setTimeout( () => {
+              _self.getTweets(_hashtagChoosen);
+            }, 500);
+          }
+          // Display data on the 3 request
+          else {
             _self.state.tweets        = response;
             _self.state.activeHashtag = _hashtagChoosen;
+            _self.state.apiRequestsNr = 0;
           }
 
-          // Empty response?
-          // if(!response.entities.length){
-          //   repeatRequest();
-          //   return;
-          // }
-          // First initialization call to show tweets from initial value
-          if(_initializationCall){
-            displayData();
-          }
-          // Not initialization call
-          // check if new data was received STILL for the old hashtag #issue1 - possible causes: cache, twitter NPM package, twitter API
-          else {
-
-              if(isNewHashtagInput){
-                  var isFirstTweetOfNewDataContainingPreviousHashtag = function(){
-                    debugger;
-                    // NOTE: Can increase the checks on multiple tweets - percentage estimates - #optimization
-                    return response[0].entities.hashtags.indexOf(_self.state.activeHashtag) !== -1;
-                    // return response[0].entities.hashtags.indexOf(_self.state.activeHashtag) !== -1;
-                  }
-                  // REPEAT request because it's possible that new data with the same old hashtag was received - #issue1
-                  // NOTE: is not 99%+ accurate - due to #issue1
-                  if(isFirstTweetOfNewDataContainingPreviousHashtag() ){
-                    repeatRequest();
-                  }
-                  else {
-                    displayData();
-                  }
-              }
-              //
-              else {
-                displayData();
-              }
-          }
-
-
-          /*
-            Possibly to be called
-          */
-          function repeatRequest {
-            _self.getTweets(_hashtagChoosen);
-          };
-
-          //
-          // //  new value has been called
-          // if(_self.state.activeHashtag !== _hashtagChoosen){
-          //
-          // }
-          // debugger;
-          // // if cache response
-          // // if data is set
-          // if(_self.state.activeHashtag){
-          //   // twitter || nodejs
-          //   if(_self.state.activeHashtag !== _hashtagChoosen){
-          //
-          //     if(res[pms])
-          //   }
-          //   // is catched?
-          //   // if new requested data has same hashtag
-          // }
-          // if( response.statuses[0].entities.hashtags.indexOf(_self.state.activeHashtag) !== -1 ){
-          //   _self.getTweets(_hashtagChoosen);
-          // } else {
-          //   _self.state.tweets = response;
-          //   _self.state.activeHashtag = _hashtagChoosen;
-          // }
         }, // success()
       });
 
-      // // get Data
-      // var httpRequest = new XMLHttpRequest();
-      //
-      // httpRequest.onreadystatechange = stateChanged;
-      // httpRequest.open('GET', 'http://localhost:7070/api/' + _hashtagChoosen);
-      // httpRequest.send();
-      //
-      //
-      // function stateChanged() {
-      //   if (httpRequest.readyState === window.XMLHttpRequest.DONE) {
-      //     if (httpRequest.status === 200) {
-      //       debugger;
-      //       // console.log(httpRequest.responseText);
-      //       var data = JSON.parse(httpRequest.responseText);
-      //       // if empty data is received
-      //       if(!data.statuses.length){
-      //         // repeat request
-      //         _self.getTweets(_hashtagChoosen)
-      //       } else {
-      //         _self.state.tweets = data;
-      //         _self.state.activeHashtag = _hashtagChoosen;
-      //       }
-      //     } else {
-      //       return('There was a problem with the request.');
-      //     }
-      //   }
-      //
-      // }
-
-  } // getTweets(hashtagChoosen, isInitializationCall)
+  } // getTweets(hashtagChoosen)
 
   onFormSubmit(){
     event.preventDefault();
@@ -247,6 +159,7 @@ style {
         <p class="tweet-created-at keep-opacity">${tweet.created_at}</p>
       </li>
     </ul>
+
   </div>
 </div>
 
