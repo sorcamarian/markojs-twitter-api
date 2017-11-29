@@ -1,7 +1,6 @@
 
 class {
 
-  // todo - replace profile url with correct one
   // todo - list of issues - start with #issue1
   // todo - update credits list
 
@@ -190,7 +189,7 @@ style {
         <li for(tweet in state.tweets.statuses) class="collection-item avatar">
           <img src="${tweet.user.profile_image_url}" alt="${tweet.user.screen_name}" class="circle">
           <span class="title">
-            <a href="${tweet.user.url}" target="_blank"> ${tweet.user.screen_name}</a>
+            <a href="//twitter.com/${tweet.user.screen_name}" target="_blank"> ${tweet.user.screen_name}</a>
           </span>
           <p class="tweet-text keep-opacity">${tweet.text}</p>
           <p class="tweet-created-at keep-opacity">${tweet.created_at}</p>
