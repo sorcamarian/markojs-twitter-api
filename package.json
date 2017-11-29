@@ -18,6 +18,7 @@
     "marko-starter": "^1.0.0"
   },
   "scripts": {
+    "prebuild": "rimraf rm -rf .cache && echo cache removed",
     "start": "marko-starter server",
     "build": "SET NODE_ENV=production && marko-starter build",
     "serve-static": "NODE_ENV=production marko-starter serve-static",

@@ -4,39 +4,150 @@ class {
   onCreate() {
     debugger;
     this.state = {
-        hashtag : "javascript",
-        tweets  : require('../../../boilerplate-tweets.json')
+        defaultHashtag : "javascript",
+        activeHashtag  : null,
+        tweets  : null
     }
-    this.state.title = `Here are the latest ${this.state.tweets.length} tweets with the hashtag #${this.state.hashtag}`;
     // include error state :(
     // title:  :(
     // entry:  A error has occured, try another hashtag
   }
   onMount() {
     var _self = this;
+    this.getTweets(this.state.defaultHashtag, "initialCall");
+  }
+  // Send a request to the server
+  getTweets(hashtagChoosen, isInitializationCall){
+      debugger;
 
-    // get Data
-    // (function() {
-    //   var httpRequest = new XMLHttpRequest();
-    //
-    //   httpRequest.onreadystatechange = stateChanged;
-    //   httpRequest.open('GET', 'https://api.github.com/users/sorcamarian/followers');
-    //   httpRequest.send();
-    //
-    //
-    //   function stateChanged() {
-    //     if (httpRequest.readyState === window.XMLHttpRequest.DONE) {
-    //       if (httpRequest.status === 200) {
-    //         debugger;
-    //         console.log(httpRequest.responseText);
-    //         var data = JSON.parse(httpRequest.responseText);
-    //         _self.state.apiData = data;
-    //       } else {
-    //         return('There was a problem with the request.');
-    //       }
-    //     }
-    //   }
-    // })();
+      // closure
+      var _hashtagChoosen     = hashtagChoosen;
+      var _initializationCall = isInitializationCall;
+      var _self               = this;
+      // helper
+      var isNewHashtagInput   = hashtagChoosen !== this.state.activeHashtag;
+
+
+      $.ajax({
+        url      : 'http://localhost:7070/api/' + _hashtagChoosen,
+        dataType : "json",
+        success  : function(response){
+          debugger;
+          var displayData = function() {
+            debugger;
+            // NOTE: without #issue1 this is the only necessary code
+            _self.state.tweets        = response;
+            _self.state.activeHashtag = _hashtagChoosen;
+          }
+
+          // Empty response?
+          // if(!response.entities.length){
+          //   repeatRequest();
+          //   return;
+          // }
+          // First initialization call to show tweets from initial value
+          if(_initializationCall){
+            displayData();
+          }
+          // Not initialization call
+          // check if new data was received STILL for the old hashtag #issue1 - possible causes: cache, twitter NPM package, twitter API
+          else {
+
+              if(isNewHashtagInput){
+                  var isFirstTweetOfNewDataContainingPreviousHashtag = function(){
+                    debugger;
+                    // NOTE: Can increase the checks on multiple tweets - percentage estimates - #optimization
+                    return response[0].entities.hashtags.indexOf(_self.state.activeHashtag) !== -1;
+                    // return response[0].entities.hashtags.indexOf(_self.state.activeHashtag) !== -1;
+                  }
+                  // REPEAT request because it's possible that new data with the same old hashtag was received - #issue1
+                  // NOTE: is not 99%+ accurate - due to #issue1
+                  if(isFirstTweetOfNewDataContainingPreviousHashtag() ){
+                    repeatRequest();
+                  }
+                  else {
+                    displayData();
+                  }
+              }
+              //
+              else {
+                displayData();
+              }
+          }
+
+
+          /*
+            Possibly to be called
+          */
+          function repeatRequest {
+            _self.getTweets(_hashtagChoosen);
+          };
+
+          //
+          // //  new value has been called
+          // if(_self.state.activeHashtag !== _hashtagChoosen){
+          //
+          // }
+          // debugger;
+          // // if cache response
+          // // if data is set
+          // if(_self.state.activeHashtag){
+          //   // twitter || nodejs
+          //   if(_self.state.activeHashtag !== _hashtagChoosen){
+          //
+          //     if(res[pms])
+          //   }
+          //   // is catched?
+          //   // if new requested data has same hashtag
+          // }
+          // if( response.statuses[0].entities.hashtags.indexOf(_self.state.activeHashtag) !== -1 ){
+          //   _self.getTweets(_hashtagChoosen);
+          // } else {
+          //   _self.state.tweets = response;
+          //   _self.state.activeHashtag = _hashtagChoosen;
+          // }
+        }, // success()
+      });
+
+      // // get Data
+      // var httpRequest = new XMLHttpRequest();
+      //
+      // httpRequest.onreadystatechange = stateChanged;
+      // httpRequest.open('GET', 'http://localhost:7070/api/' + _hashtagChoosen);
+      // httpRequest.send();
+      //
+      //
+      // function stateChanged() {
+      //   if (httpRequest.readyState === window.XMLHttpRequest.DONE) {
+      //     if (httpRequest.status === 200) {
+      //       debugger;
+      //       // console.log(httpRequest.responseText);
+      //       var data = JSON.parse(httpRequest.responseText);
+      //       // if empty data is received
+      //       if(!data.statuses.length){
+      //         // repeat request
+      //         _self.getTweets(_hashtagChoosen)
+      //       } else {
+      //         _self.state.tweets = data;
+      //         _self.state.activeHashtag = _hashtagChoosen;
+      //       }
+      //     } else {
+      //       return('There was a problem with the request.');
+      //     }
+      //   }
+      //
+      // }
+
+  } // getTweets(hashtagChoosen, isInitializationCall)
+
+  onFormSubmit(){
+    event.preventDefault();
+    var inputValue = event.target.querySelector("input").value;
+    this.getTweets(inputValue);
+  }
+
+  debuggFunction(a){
+    debugger;
   }
 
 }
@@ -100,9 +211,14 @@ style {
 <div class="navbar-fixed">
   <nav>
     <div class="nav-wrapper">
-      <form>
+      <form on-submit('onFormSubmit')>
         <div class="input-field">
-          <input id="search" type="search" required="" value="${state.hashtag}">
+          <input
+              id="search"
+              type="search"
+              required=""
+              on-contextmenu('debuggFunction')
+              value="${state.activeHashtag}">
           <label class="label-icon active" for="search"><i class="material-icons">search</i></label>
           <i class="material-icons">close</i>
         </div>
@@ -113,13 +229,13 @@ style {
 
 <div class="content">
   <div id="tweets">
-    <ul class="collection with-header">
+    <ul if(state.tweets) class="collection with-header" >
 
       <li class="collection-header">
-        <h4>Here are the latest ${state.tweets.length} tweets with the hashtag: #${state.hashtag}</h4>
+        <h4>Here are the latest ${state.tweets.statuses.length} tweets with the hashtag: #${state.activeHashtag}</h4>
       </li>
 
-      <li for(tweet in state.tweets) class="collection-item avatar">
+      <li for(tweet in state.tweets.statuses) class="collection-item avatar">
         <img src="${tweet.user.profile_image_url}" alt="${tweet.user.screen_name}" class="circle">
 
         <span class="title">
