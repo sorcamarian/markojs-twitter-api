@@ -47,6 +47,12 @@ class {
             _self.state.apiRequestsNr = 0;
             // blur the search input from top navigation
             _self.getEl("searchInput").blur();
+            // scroll to top
+            // credits: https://stackoverflow.com/questions/16475198/jquery-scrolltop-animation#answer-16475288
+            $("html, body")
+              .animate(
+                { scrollTop: 0 }, 600
+              );
           }
 
         }, // success()
