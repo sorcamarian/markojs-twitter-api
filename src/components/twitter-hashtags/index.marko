@@ -1,11 +1,9 @@
 
 class {
 
-  // todo - list of issues - start with #issue1
   // todo - update credits list
 
   onCreate() {
-    debugger;
     this.state = {
         defaultHashtag : "javascript",
         activeHashtag  : null,
@@ -72,6 +70,16 @@ class {
   debuggFunction(a){
     debugger;
   }
+
+
+  /*
+    Details about issues
+
+    #issue1
+      The API responds with the same data for the last requested hashtag.
+      A solution is to send multiple requests, with the same hashtag, after a couple of milliseconds and display the last one
+  */
+
 
 }
 
