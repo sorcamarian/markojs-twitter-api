@@ -2,6 +2,7 @@
 class {
 
   // todo - update credits list
+  // todo - create readme file
 
   onCreate() {
     this.state = {
@@ -9,7 +10,8 @@ class {
         activeHashtag  : null,
         tweets         : null,
         // API will be called 3 times due to API cache #issue1
-        apiRequestsNr  : 0
+        apiRequestsNr   : 0,
+        ajaxErrorTimes  : 0
     }
   }
   onMount() {
@@ -18,7 +20,7 @@ class {
   }
   // Send API request
   getTweets(hashtagChoosen){
-      debugger;
+      // debugger;
 
       // closure
       var _hashtagChoosen     = hashtagChoosen;
@@ -55,7 +57,15 @@ class {
 
         }, // success()
         error : function(){
-          _self.state.tweets = new Error("API call failed");
+          debugger;
+          // retry one more time if first time error
+          if (_self.state.ajaxErrorTimes == 0) {
+            _self.state.ajaxErrorTimes++;
+            _self.getTweets(_hashtagChoosen);
+          } else {
+            _self.state.tweets = new Error("API call failed");
+            // _self.state.ajaxErrorTimes = 0;
+          }
         }
       });
 
