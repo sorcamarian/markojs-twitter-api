@@ -13,6 +13,8 @@ cd markojs-twitter-api-server
 npm install
 node index.js
 ```
+Result of current `/dist` codes can be seen on http://localhost:7070/
+
 ### Start Marko.js
 Clone this repository and start Marko
 ```bash
@@ -21,6 +23,9 @@ cd markojs-twitter-api
 npm install
 npm start
 ```
+
+Live User Interface changes can be seen on http://localhost:8080/
+
 
 ---
 
