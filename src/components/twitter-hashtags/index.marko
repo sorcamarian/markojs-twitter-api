@@ -56,11 +56,13 @@ class {
 
         }, // success()
         error : function(){
-          debugger;
+          // debugger;
           // retry one more time if first time error
           if (_self.state.ajaxErrorTimes == 0) {
             _self.state.ajaxErrorTimes++;
-            _self.getTweets(_hashtagChoosen);
+            setTimeout( () => {
+              _self.getTweets(_hashtagChoosen);
+            }, 500);
           } else {
             _self.state.tweets = new Error("API call failed");
             // _self.state.ajaxErrorTimes = 0;
@@ -240,7 +242,7 @@ style {
   </div>
   <div class="footer-copyright">
     <div class="container">
-      Source codes on GitHub
+      Source codes on <a href="https://github.com/sorcamarian/markojs-twitter-api" target="_blank">GitHub</a>
     </div>
   </div>
 </footer>

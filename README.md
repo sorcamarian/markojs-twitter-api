@@ -1,7 +1,7 @@
-# Marko.js Twitter API
+# Marko.js UI Twitter API consumer
 Source codes for a User Interface built with [Marko.js](https://markojs.com/) and [MaterializeCSS](http://materializecss.com/) which consumes a API built with [Express.js](http://expressjs.com/) and the npm plugin: [twitter](https://www.npmjs.com/package/twitter) that requests data from [Twitter API](https://developer.twitter.com/en/docs/api-reference-index).
 
-Live at: https://marko-twitter-api-hfxcxjqpwo.now.sh/ hosted by [Zeit.co](https://zeit.co/)
+Live at: https://marko-twitter-api-paodlkdbyp.now.sh/ hosted by [Zeit.co](https://zeit.co/)
 
 ## Local ussage
 
@@ -34,4 +34,3 @@ Live User Interface changes can be seen on http://localhost:8080/
 
 # Build with Marko Starter Demo
 This repo demos the basic features of [`marko-starter`](https://github.com/marko-js/marko-starter).
-
