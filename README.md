@@ -5,17 +5,20 @@ Live at: https://marko-twitter-api-hfxcxjqpwo.now.sh/ hosted by [Zeit.co](https:
 
 ## Local ussage
 
-### Prepare the local server
+### 1) Prepare the local server
 Clone and start the local server: https://github.com/sorcamarian/markojs-twitter-api-server
 ```bash
 git clone https://github.com/sorcamarian/markojs-twitter-api-server.git
 cd markojs-twitter-api-server
 npm install
+```
+NOTE: Update the Twitter credentials from [server.js#L12](https://github.com/sorcamarian/markojs-twitter-api-server/blob/master/index.js#L12)
+```bash
 node index.js
 ```
 Result of current `/dist` codes can be seen on http://localhost:7070/
 
-### Start Marko.js
+### 2) Start Marko.js
 Clone this repository and start Marko
 ```bash
 git clone https://github.com/sorcamarian/markojs-twitter-api.git
