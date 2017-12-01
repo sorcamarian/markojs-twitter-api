@@ -1,8 +1,7 @@
 
 class {
 
-  // todo - update credits list
-  // todo - create readme file
+  // todo - update readme file
 
   onCreate() {
     this.state = {
@@ -27,7 +26,7 @@ class {
       var _self               = this;
 
       $.ajax({
-        url      : 'http://localhost:7070/api/' + _hashtagChoosen,
+        url      : '//localhost:7070/api/' + _hashtagChoosen,
         dataType : "json",
         success  : function(response){
 
@@ -48,7 +47,7 @@ class {
             // blur the search input from top navigation
             _self.getEl("searchInput").blur();
             // scroll to top
-            // credits: https://stackoverflow.com/questions/16475198/jquery-scrolltop-animation#answer-16475288
+            // credits: https//stackoverflow.com/questions/16475198/jquery-scrolltop-animation#answer-16475288
             $("html, body")
               .animate(
                 { scrollTop: 0 }, 600
@@ -233,9 +232,9 @@ style {
           <i class="material-icons">build</i>&nbsp;
           <i class="material-icons">laptop</i>
         </h5>
-        <p class="grey-text text-lighten-4">FrontEnd: <a target="_blank" href="://markojs.com">Marko.js</a> and  <a target="_blank" href="://materializecss.com">MaterializeCSS</a></p>
-        <p class="grey-text text-lighten-4">BackEnd:  <a target="_blank" href="://expressjs.com">Express.js</a> and <a target="_blank" href="://www.npmjs.com/package/twitter">twitter NPM plugin</a></p>
-        <p class="grey-text text-lighten-4">Hosted by:  <a target="_blank" href="://zeit.co">Zeit.co</a></p>
+        <p class="grey-text text-lighten-4">FrontEnd: <a target="_blank" href="//markojs.com">Marko.js</a> and  <a target="_blank" href="//materializecss.com">MaterializeCSS</a></p>
+        <p class="grey-text text-lighten-4">BackEnd:  <a target="_blank" href="//expressjs.com">Express.js</a> and <a target="_blank" href="//www.npmjs.com/package/twitter">twitter NPM plugin</a></p>
+        <p class="grey-text text-lighten-4">Hosted by:  <a target="_blank" href="//zeit.co">Zeit.co</a></p>
       </div>
     </div>
   </div>
